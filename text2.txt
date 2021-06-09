@@ -1,0 +1,82 @@
+Plan of developing any project:
+1. Understand the goal of the project, what problems it should solve (here it's defined for me - give a guidance how to make most money while playing blackjack)
+2. Understand the process in general (rules of blackjack, strategies on hit/stay, how counting works)
+3. Draw a scheme of the app, how its part will communicate with each other (here UI)
+4. Describe how an app will work (user experience step by step)
+5. Plan functionality (sequence of functions and their output)
+
+BlackJack project.
+
+Plan:
+- understand the rules of blackjack and winning conditions: DONE
+-- understand how many combinations of two different cards can be done of deck of 52 cards: 1326 combinations, 52 combinations of ace+10. So, success probability is 4,82%. Two decks: 4,78%
+- understand count counting strategy and why it works: DONE
+- emulate a game: NOT NEEDED ACCORDING TO THE TASK
+- make strategies for a user: DONE
+1) to hit or to stay 
+2) to increase bet, to remain the same bet, or to leave the game
+
+
+Description of the game's rules:
+- you place your bet
+- dealer deals each gambler two cards and 2 cards himself (one of which is hidden)
+- if the sum of the cards of one or more gamblers is 21 -> he wins and leaves this round of game
+- upon first round every gambler makes a decision whether to hit one more card or to pass based on his current sum
+- gambler can double bet but take only one more card in this case
+- a gambler can hit one more card or stand still up to the point where he either gets too much and leaves the game or decides to stand still until dealer gets his cards
+- when every remaining gambler makes his mind and stands still, dealer starts picking up cards for himself
+- game is over when a dealer gets 17 or more
+- if the user is closer to 21 than a dealer, he wins. If equal, no one wins. If he's further, he loses
+- in case of win, bet is returned + one bet at top. In case of a lost, bet is taken
+- if the hand has an ace - it's a soft hand, meaning it will not get more than 21 with the next card, ace will turn into 1. All other hands are hard 
+
+
+Hit/stay strategies - can be downloaded from wiki in the form of a dictionary 
+
+
+How counting works:
+*we keep counting until the dealer shuffles
+- cards 2-6 are worth 1 point
+- cards 10, J, Q, K, A are worth -1 point
+- cards 7-9 are worth 0
+- after every round all points are summed up - this is a running count
+- then they are divided by number of decks left in shoe, this is a true count 
+- if true count is negative, leave the game 
+- if true count is positive, true count - 1 is the amount of minimum bet you can make 
+
+
+Variables:
+- number of decks left (may say there are 6 decks at the beginning) - global
+- number of gamblers - local?
+- sum of cards of every one - needed? local?
+- sum of running count of every one and total
+- true count - local
+- dictionary {player: cards}
+
+I can try to disguise my app in educational purposes but in general if regular user input is required, it looks pretty suspicious for a dealer whatever app you seem to be covering under. 
+I guess the first point is made for a novice in a continuous game. He comes in and assesses number of decks left for true count. Starting true count in this case is 0.
+For the purpose of this exercise I will leave out splitting and surrender options. 
+
+Description of the app:
+- user chooses a number of players first hand, then appears a table view with respective number of text fields and labels. Running counting is 0, num of decks is 6. 
+- user input 2 cards for every player and one card dealer 
+- indication of whether to hit, stay or bust appears under each text label
+-- fields with "bust" label become inactive 
+- when every player makes up his mind, user inserts dealer's cards
+- at this point all players' textFields become inactive 
+- app shows a message who won against the dealer 
+- user presses new round button and sees suggestion to increase or decrease bet 
+
+Sequence of functions:
+- create collectionView with customized tableView cells so that they are placed horizontally with even space: DONE
+- newDeckButton (decreases the number of decks left): DONE
+- N of players button (sets number of element in table view, isn't enabled after. Only one number from 2-7 is allowed, no empty strings): DONE
+* Since there are several textField delegate methods in this project, maybe I should create different classes for every textField
+- textField func to verify input of only one letter (2-10, J, Q, K, A) for players and only one value can be taken for dealer, it stays is the textField until another one is inserted: DONE
+- understand difference in using textFieldShouldReturn and textFieldDidEndEditing: DONE
+- when two or more values are received, inside of one of these two functions call hitOrStay func (increase running count, check for busting, display "hit" or "stay" in textLabel)
+- in case of a bust, deactivate textField 
+- when user inputs dealer's cards, all players textFields are deactivated
+- running count is increased
+- newRound func is called (calculates true count, shows suggestion regarding the next bet, keeps running count, resets true count, clears textFields, cards labels, hit/stay lebels) 
+

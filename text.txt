@@ -1,0 +1,3 @@
+In this app I learnt:
+- how Textfield object work and practice them a lot, including tapGestureRecogniser
+- started to understand how delegates work and used to delegates and functions with custom protocol 
